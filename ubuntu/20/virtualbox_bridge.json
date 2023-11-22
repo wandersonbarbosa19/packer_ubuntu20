@@ -1,0 +1,58 @@
+{
+  "builders": [
+    {
+      "boot_command": [
+        "<enter><enter><f6><esc><wait> ",
+        "autoinstall ds=nocloud-net;seedfrom=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
+        "<enter><wait>"
+      ],
+      "boot_wait": "5s",
+      "communicator": "ssh",
+      "cpus": "1",
+      "disk_size": "20000",
+      "guest_additions_sha256": "10a6683db0ee4c48587b1385a8b90968b1a1a524a739e49baf14b9244327dde7",
+      "guest_additions_url": "/home/nazario/desenvolvimento/isos/VBoxGuestAdditions_6.0.18.iso",
+      "guest_os_type": "Ubuntu_64",
+      "headless": "false",
+      "http_directory": "http",
+      "iso_checksum": "sha256:caf3fd69c77c439f162e2ba6040e9c320c4ff0d69aad1340a514319a9264df9f",
+      "iso_urls": [
+        "/home/nazario/desenvolvimento/isos/ubuntu-20.04-live-server-amd64.iso",
+        "https://releases.ubuntu.com/20.04/ubuntu-20.04-live-server-amd64.iso"
+      ],
+      "memory": "2048",
+      "output_directory": "disk",
+      "output_filename": "ubuntu_server_20",
+      "shutdown_command": "echo 'ubuntu' | sudo -S shutdown -P now",
+      "sound": "none",
+      "ssh_handshake_attempts": "20",
+      "ssh_password": "{{ user `my_ssh_password` }}",
+      "ssh_port": 22,
+      "ssh_pty": true,
+      "ssh_timeout": "4h",
+      "ssh_username": "{{ user `my_ssh_username` }}",
+      "type": "virtualbox-iso",
+      "usb": "false",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--nic1", "bridged" ],
+        [ "modifyvm", "{{.Name}}", "--bridgeadapter1", "eth0" ],
+        [ "modifyvm", "{{.Name}}", "--nictype1", "82540EM" ],
+        [ "modifyvm", "{{.Name}}", "--nicpromisc1", "deny" ],
+        [ "modifyvm", "{{.Name}}", "--macaddress1", "080027ACE3A8" ],
+        [ "modifyvm", "{{.Name}}", "--cableconnected1", "off" ]
+      ],
+      "vm_name": "Ubuntu Server 20.04 LTS (Packer)"
+    }
+  ],
+  "provisioners": [
+    {
+      "playbook_file": "../../../../ansible/linux/pb_linux_instalacao.yml",
+      "roles_path": "../../../../ansible/linux/roles/",
+      "type": "ansible"
+    }
+  ],
+  "variables": {
+    "my_ssh_password": "ubuntu",
+    "my_ssh_username": "ubuntu"
+  }
+}
